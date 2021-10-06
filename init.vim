@@ -1,16 +1,8 @@
 call plug#begin('~/.vim/plugged')
-Plug 'ycm-core/YouCompleteMe'
-Plug 'arakashic/chromatica.nvim'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-Plug 'wellle/context.vim'
+
 Plug 'junegunn/fzf.vim'
-Plug 'numirias/semshi', {'do': ':UpdateRemotePlugins'}
-Plug 'huawenyu/neogdb.vim'
 
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-
-Plug 'wadackel/vim-dogrun'
 
 Plug 'morhetz/gruvbox'
 Plug 'mhartington/oceanic-next'
@@ -20,12 +12,28 @@ Plug 'Yggdroot/indentLine'
 "colorscheme
 Plug 'chuling/vim-equinusocio-material'
 
+Plug 'neovim/nvim-lspconfig'
+Plug 'nvim-lua/lsp-status.nvim'
+
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/nvim-cmp'
+
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+
+Plug 'SirVer/ultisnips'
+Plug 'quangnguyen30192/cmp-nvim-ultisnips'
+
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim'
+
+Plug 'hoob3rt/lualine.nvim'
+Plug 'kyazdani42/nvim-web-devicons'
+Plug 'ryanoasis/vim-devicons'
+
+Plug 'folke/trouble.nvim'
 
 call plug#end()
-
-"set tabstop=4
-"set shiftwidth=4
-"set expandtab
 
 
 if (has("termguicolors"))
@@ -35,7 +43,6 @@ endif
 " Theme
 syntax enable
 colorscheme OceanicNext
-
 
 set cursorline 
 
@@ -48,27 +55,117 @@ set number relativenumber
 
 let g:indentLine_char_list = ['|']
 
+set completeopt=menu,menuone,noselect
 
-" chromatica
+lua << EOF
+local cmp = require'cmp'
 
-let g:chromatica#enable_at_startup = 1
-let g:chromatica#libclang_path = '/usr/lib/llvm-9/lib/libclang.so'
-let g:chromatica#global_args = ['-isystem/usr/lib/llvm-9/lib/clang/9.0.0/include', '-isystem/usr/include/c++/9/']
-let g:chromatica#highlight_feature_level = 5
-let g:chromatica#search_source_args = 1
+cmp.setup({
+snippet = {
+  expand = function(args)
+    vim.fn["UltiSnips#Anon"](args.body)
+  end,
+},
+mapping = {
+  ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+  ['<C-f>'] = cmp.mapping.scroll_docs(4),
+  ['<C-Space>'] = cmp.mapping.complete(),
+  ['<C-e>'] = cmp.mapping.close(),
+  ['<CR>'] = cmp.mapping.confirm({ select = true }),
+},
+sources = {
+  { name = 'nvim_lsp' },
+  { name = 'ultisnips' },
+  { name = 'buffer' },
+}
+})
 
-let g:ycm_confirm_extra_conf = 1
+local nvim_lsp = require('lspconfig')
+local on_attach = function(client, bufnr)
+  local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+  local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
+
+  -- Enable completion triggered by <c-x><c-o>
+  buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
+
+  -- Mappings.
+  local opts = { noremap=true, silent=true }
+
+  -- See `:help vim.lsp.*` for documentation on any of the below functions
+  buf_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+  buf_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
+  buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
+  buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+  buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+  buf_set_keymap('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
+  buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
+  buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
+  buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+  buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+  buf_set_keymap('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+  buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+  buf_set_keymap('n', '<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
+  buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
+  buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
+  buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
+  buf_set_keymap('n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+end
+
+require'lspconfig'.clangd.setup{
+    cmd = { 'clangd-12', '--background-index' , '--clang-tidy'},
+    capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities()),
+    on_attach = on_attach,
+    flags = {
+      debounce_text_changes = 150,
+    },
+}
+
+local function lsp_status()
+    if not pcall(require, 'lsp-status') then
+        return 
+    end
+    return require'lsp-status'.status()
+end
+
+require'lualine'.setup {
+  options = {
+    icons_enabled = true,
+    theme = 'gruvbox',
+    --component_separators = {'', ''},
+    --section_separators = {'', ''},
+    disabled_filetypes = {}
+  },
+  sections = {
+    lualine_a = {'mode'},
+    lualine_b = {'branch'},
+    lualine_c = {'filename'},
+    lualine_x = {'encoding', 'fileformat', 'filetype'},
+    lualine_y = {'progress', lsp_status},
+    lualine_z = {'location'}
+  },
+  inactive_sections = {
+    lualine_a = {},
+    lualine_b = {},
+    lualine_c = {'filename'},
+    lualine_x = {'location'},
+    lualine_y = {},
+    lualine_z = {}
+  },
+  tabline = {},
+  extensions = {}
+}
+
+require'nvim-treesitter.configs'.setup {
+  ensure_installed = "maintained", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
+  ignore_install = { "javascript" }, -- List of parsers to ignore installing
+  highlight = {
+    enable = true,              -- false will disable the whole extension
+    additional_vim_regex_highlighting = false,
+  },
+}
+
+require'trouble'.setup{}
 
 
-" if you prefer the default one, comment out this line
-"let g:equinusocio_material_darker = 1
+EOF
 
-" make vertsplit invisible
-"let g:equinusocio_material_hide_vertsplit = 1
-
-"colorscheme equinusocio_material
-
-" this theme has a buildin lightline theme, you can turn it on
-"let g:lightline = {
-"  \ 'colorscheme': 'equinusocio_material',
-"\ }
