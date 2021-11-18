@@ -20,6 +20,7 @@ Plug 'hrsh7th/cmp-buffer'
 Plug 'hrsh7th/nvim-cmp'
 
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'nvim-treesitter/playground'
 
 Plug 'SirVer/ultisnips'
 Plug 'quangnguyen30192/cmp-nvim-ultisnips'
@@ -67,6 +68,7 @@ snippet = {
   end,
 },
 mapping = {
+  ['<Tab>'] = cmp.mapping(cmp.mapping.select_next_item(), { 'i', 's' }),
   ['<C-d>'] = cmp.mapping.scroll_docs(-4),
   ['<C-f>'] = cmp.mapping.scroll_docs(4),
   ['<C-Space>'] = cmp.mapping.complete(),
@@ -120,6 +122,16 @@ require'lspconfig'.clangd.setup{
     },
 }
 
+require'lspconfig'.svlangserver.setup{
+    cmd = {'svlangserver'},
+    root = function() return '.' end,
+}
+
+require'lspconfig'.tsserver.setup{
+    --cmd = {'/usr/local/bin/typescript-language-server', '--stdio'},
+    on_attach = on_attach
+}
+
 local function lsp_status()
     if not pcall(require, 'lsp-status') then
         return 
@@ -155,6 +167,16 @@ require'lualine'.setup {
   extensions = {}
 }
 
+local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
+parser_config.awk = {
+  install_info = {
+    url = "/mnt/e/Work/tree-sitter-awk", -- local path or git repo
+    files = {"src/parser.c"}
+  },
+  filetype = "awk", -- if filetype does not agrees with parser name
+--  used_by = {"bar", "baz"} -- additional filetypes that use this parser
+  }
+
 require'nvim-treesitter.configs'.setup {
   ensure_installed = "maintained", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
   ignore_install = { "javascript" }, -- List of parsers to ignore installing
@@ -162,6 +184,27 @@ require'nvim-treesitter.configs'.setup {
     enable = true,              -- false will disable the whole extension
     additional_vim_regex_highlighting = false,
   },
+}
+
+require "nvim-treesitter.configs".setup {
+  playground = {
+    enable = true,
+    disable = {},
+    updatetime = 25, -- Debounced time for highlighting nodes in the playground from source code
+    persist_queries = false, -- Whether the query persists across vim sessions
+    keybindings = {
+      toggle_query_editor = 'o',
+      toggle_hl_groups = 'i',
+      toggle_injected_languages = 't',
+      toggle_anonymous_nodes = 'a',
+      toggle_language_display = 'I',
+      focus_language = 'f',
+      unfocus_language = 'F',
+      update = 'R',
+      goto_node = '<cr>',
+      show_help = '?',
+    },
+  }
 }
 
 require'trouble'.setup{}
