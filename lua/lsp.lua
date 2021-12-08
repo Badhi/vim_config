@@ -1,9 +1,7 @@
 local M = {}
 
 function M.setup()
-    local nvim_lsp = require('lspconfig')
-
-    local on_attach = function(client, bufnr)
+    local on_attach = function(_, bufnr)
         local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
         local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
 
@@ -33,14 +31,21 @@ function M.setup()
         buf_set_keymap('n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
     end
 
-    require'lspconfig'.clangd.setup{
-        cmd = { 'clangd-12', '--background-index' , '--clang-tidy'},
-        capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities()),
-        on_attach = on_attach,
-        flags = {
-            debounce_text_changes = 150,
-        },
-    }
+    local clangd_path = vim.fn.exepath('clangd')
+
+    if not clangd_path then
+        print("cannot find the clangd path")
+    else
+        require'lspconfig'.clangd.setup{
+            cmd = { clangd_path, '--background-index' , '--clang-tidy'},
+            capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities()),
+            on_attach = on_attach,
+            flags = {
+                debounce_text_changes = 150,
+            },
+        }
+    end
+
 
     --require'lspconfig'.svlangserver.setup{
     --    cmd = {'svlangserver'},
@@ -49,6 +54,40 @@ function M.setup()
 
     require'lspconfig'.tsserver.setup{
         on_attach = on_attach
+    }
+
+    -- Expecting lua lang server parth is set in the PATH env variable
+    local sumneko_binary_path = vim.fn.exepath('lua-language-server')
+    local sumneko_root_path = vim.fn.fnamemodify(sumneko_binary_path, ':h:h:h')
+
+    local runtime_path = vim.split(package.path, ';')
+    table.insert(runtime_path, "lua/?.lua")
+    table.insert(runtime_path, "lua/?/init.lua")
+
+    require'lspconfig'.sumneko_lua.setup {
+        cmd = {sumneko_binary_path, "-E", sumneko_root_path .. "/main.lua"};
+        settings = {
+            Lua = {
+                runtime = {
+                    -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
+                    version = 'LuaJIT',
+                    -- Setup your lua path
+                    path = runtime_path,
+                },
+                diagnostics = {
+                    -- Get the language server to recognize the `vim` global
+                    globals = {'vim'},
+                },
+                workspace = {
+                    -- Make the server aware of Neovim runtime files
+                    library = vim.api.nvim_get_runtime_file("", true),
+                },
+                -- Do not send telemetry data containing a randomized but unique identifier
+                telemetry = {
+                    enable = false,
+                },
+            },
+        },
     }
 
 end

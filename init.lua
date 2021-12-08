@@ -35,6 +35,7 @@ require 'paq' {
 
     'folke/trouble.nvim',
 
+    'tami5/lspsaga.nvim',
 }
 
 opt.termguicolors = true
