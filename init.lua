@@ -36,6 +36,12 @@ require 'paq' {
     'folke/trouble.nvim',
 
     'tami5/lspsaga.nvim',
+    'badhi/nvim-treesitter-cpp-tools',
+    'Badhi/yabs.nvim',
+
+    'mfussenegger/nvim-dap',
+    'rcarriga/nvim-dap-ui',
+    'jbyuki/one-small-step-for-vimkind',
 }
 
 opt.termguicolors = true
@@ -55,4 +61,6 @@ require'treesitter'.setup()
 require'lsp'.setup()
 require'lualine-local'.setup()
 require'cmp-local'.setup()
+require'debug-adapters'.setup()
+require'jobs'.setup()
 
