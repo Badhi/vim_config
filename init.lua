@@ -22,6 +22,7 @@ require 'paq' {
 
     'nvim-treesitter/nvim-treesitter',
     'nvim-treesitter/playground',
+    'nvim-treesitter/nvim-treesitter-textobjects',
 
     'SirVer/ultisnips',
     'quangnguyen30192/cmp-nvim-ultisnips',
@@ -41,6 +42,7 @@ require 'paq' {
 
     'mfussenegger/nvim-dap',
     'rcarriga/nvim-dap-ui',
+    'theHamsta/nvim-dap-virtual-text',
     'jbyuki/one-small-step-for-vimkind',
 }
 

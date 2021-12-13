@@ -18,6 +18,17 @@ function M.setup()
             enable = true,              -- false will disable the whole extension
             additional_vim_regex_highlighting = false,
         },
+        textobjects = {
+            swap = {
+                enable = true,
+                swap_next = {
+                    ["<leader>a"] = "@parameter.inner",
+                },
+                swap_previous = {
+                    ["<leader>A"] = "@parameter.inner",
+                },
+            },
+        },
     }
 
     require "nvim-treesitter.configs".setup {
