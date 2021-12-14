@@ -65,6 +65,12 @@ function M.setup()
     dap.listeners.before.event_terminated['dapui_config'] = function() dapui.close() end
     dap.listeners.before.event_exited['dapui_config'] = function() dapui.close() end
 
+    vim.cmd[[highlight DapBreakpoint guifg='Red']]
+    vim.cmd[[highlight DapStopped guifg='LightGreen']]
+    vim.cmd[[highlight DapStoppedLine guibg='#283845']]
+    vim.fn.sign_define('DapBreakpoint', {text='', texthl='DapBreakpoint', linehl='', numhl=''})
+    vim.fn.sign_define('DapStopped', {text='', texthl='DapStopped', linehl='DapStoppedLine', numhl=''})
+
 
     dapui.setup({
         icons = { expanded = "▾", collapsed = "▸" },

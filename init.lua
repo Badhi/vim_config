@@ -54,10 +54,27 @@ opt.expandtab= true
 opt.number=true
 opt.relativenumber=true
 
-
 cmd('syntax enable')
 cmd('colorscheme OceanicNext')
 cmd('command CDC cd %:p:h')
+
+-- Telescope commands
+local opts = { noremap = true, silent = true}
+vim.api.nvim_set_keymap('n', '<leader>fo', "<cmd>:Telescope oldfiles<CR>", opts)
+vim.api.nvim_set_keymap('n', '<leader>fb', "<cmd>:Telescope buffers<CR>", opts)
+vim.api.nvim_set_keymap('n', '<leader>ff', "<cmd>:Telescope find_files<CR>", opts)
+
+--window resizing
+vim.api.nvim_set_keymap('n', '<Leader>+', ':exe "resize " . (winheight(0) * 3/2)<CR>', opts)
+vim.api.nvim_set_keymap('n', '<Leader>-', ':exe "resize " . (winheight(0) * 2/3)<CR>', opts)
+vim.api.nvim_set_keymap('n', '<Leader>]', ':exe "vertical resize " . (winwidth(0) * 3/2)<CR>', opts)
+vim.api.nvim_set_keymap('n', '<Leader>[', ':exe "vertical resize " . (winwidth(0) * 2/3)<CR>', opts)
+
+vim.api.nvim_set_keymap('n', '<C-F2>', ':res +1<CR>', opts)
+vim.api.nvim_set_keymap('n', '<C-F3>', ':res -1<CR>', opts)
+vim.api.nvim_set_keymap('n', '<C-F4>', ':vertical resize +1<CR>', opts)
+vim.api.nvim_set_keymap('n', '<C-F5>', ':vertical resize -1<CR>', opts)
+
 
 require'treesitter'.setup()
 require'lsp'.setup()
