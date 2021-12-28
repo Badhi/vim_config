@@ -1,6 +1,7 @@
 local M = {}
 
 local function lsp_setup ()
+    --vim.lsp.set_log_level('trace')
     vim.cmd[[highlight DiagnosticHint guifg='Grey']]
     vim.cmd[[highlight DiagnosticUnderlineHint guisp=Grey gui=underline guifg=NONE guibg=NONE ctermfg=NONE ctermbg=NONE term=underline cterm=underline]]
 
@@ -24,13 +25,12 @@ local function on_attach(_, bufnr)
     -- See `:help vim.lsp.*` for documentation on any of the below functions
     buf_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
     buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
-    buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+    buf_set_keymap('n', '<C-]>', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
     buf_set_keymap('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
     buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
     buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
     buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
     buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-    buf_set_keymap('n', '<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
     buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
     buf_set_keymap('n', '<leader>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
     --
@@ -40,6 +40,7 @@ local function on_attach(_, bufnr)
     --buf_set_keymap('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
     --buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
     --buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
+    --buf_set_keymap('n', '<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
 
     -- lsp saga
     buf_set_keymap('n', '<leader>ca', '<cmd>lua require("lspsaga.codeaction").code_action()<CR>', opts)
@@ -53,11 +54,11 @@ local function on_attach(_, bufnr)
     buf_set_keymap('n', '<leader>cd', '<cmd>lua require"lspsaga.diagnostic".show_line_diagnostics()<CR>', opts)
     buf_set_keymap('n', '[e', '<cmd>lua require"lspsaga.diagnostic".navigate("next")({severity_limit = "Error"})<CR>', opts)
     buf_set_keymap('n', ']e', '<cmd>lua require"lspsaga.diagnostic".navigate("prev")({severity_limit = "Error"})<CR>', opts)
-    --buf_set_keymap('n', 'gr', '<cmd>lua require"lspsaga.provider".lsp_finder()<CR>', opts)
+    buf_set_keymap('n', 'gr', '<cmd>lua require"lspsaga.provider".lsp_finder()<CR>', opts)
 end
 
 local function clangd_lsp()
-    local clangd_path = vim.fn.exepath('clangd')
+    local clangd_path = vim.fn.exepath('clangd-12')
 
     if not clangd_path then
         print("cannot find the clangd path")
@@ -85,6 +86,12 @@ end
     --    root = function() return '.' end,
     --}
 --end
+
+local function pyright_lsp()
+    require'lspconfig'.pyright.setup{
+        on_attach = on_attach
+    }
+end
 
 local function lua_lsp()
     -- Expecting lua lang server parth is set in the PATH env variable
@@ -127,6 +134,7 @@ function M.setup()
 
     clangd_lsp()
     tsserver_lsp()
+    pyright_lsp()
     lua_lsp()
 end
 

@@ -29,9 +29,9 @@ function M.setup()
                 },
             },
         },
-    }
-
-    require "nvim-treesitter.configs".setup {
+        nt_cpp_tools = {
+            enable = true,
+        },
         playground = {
             enable = true,
             disable = {},
@@ -51,6 +51,7 @@ function M.setup()
             },
         }
     }
+
 end
 
 return M
