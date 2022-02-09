@@ -6,6 +6,7 @@ require 'paq' {
 
     -- 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 
+    'tpope/vim-commentary',
     'morhetz/gruvbox',
     'mhartington/oceanic-next',
 
@@ -15,12 +16,14 @@ require 'paq' {
 
     'neovim/nvim-lspconfig',
     'nvim-lua/lsp-status.nvim',
+    'p00f/clangd_extensions.nvim',
+    'ray-x/lsp_signature.nvim',
 
     'hrsh7th/cmp-nvim-lsp',
     'hrsh7th/cmp-buffer',
     'hrsh7th/nvim-cmp',
 
-    'nvim-treesitter/nvim-treesitter',
+    'Badhi/nvim-treesitter',
     'nvim-treesitter/playground',
     'nvim-treesitter/nvim-treesitter-textobjects',
 
@@ -44,6 +47,8 @@ require 'paq' {
     'rcarriga/nvim-dap-ui',
     'theHamsta/nvim-dap-virtual-text',
     'jbyuki/one-small-step-for-vimkind',
+    'tanvirtin/vgit.nvim',
+    'rebelot/heirline.nvim'
 }
 
 opt.termguicolors = true
@@ -82,4 +87,6 @@ require'lualine-local'.setup()
 require'cmp-local'.setup()
 require'debug-adapters'.setup()
 require'jobs'.setup()
+
+require'vgit'.setup()
 
