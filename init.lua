@@ -2,12 +2,12 @@ local opt = vim.opt
 local cmd = vim.cmd
 
 require 'paq' {
-    'github/copilot.vim',
     'junegunn/fzf.vim',
 
     -- 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
      'sotte/presenting.vim',
 
+    'tpope/vim-commentary',
     'morhetz/gruvbox',
     'mhartington/oceanic-next',
 
@@ -17,6 +17,8 @@ require 'paq' {
 
     'neovim/nvim-lspconfig',
     'nvim-lua/lsp-status.nvim',
+    'p00f/clangd_extensions.nvim',
+    'ray-x/lsp_signature.nvim',
 
     'hrsh7th/cmp-nvim-lsp',
     'hrsh7th/cmp-buffer',
@@ -48,6 +50,8 @@ require 'paq' {
     'jbyuki/one-small-step-for-vimkind',
 
     'tpope/vim-commentary',
+    'tanvirtin/vgit.nvim',
+    'rebelot/heirline.nvim'
 }
 
 opt.termguicolors = true
@@ -98,4 +102,6 @@ require'lualine-local'.setup()
 require'cmp-local'.setup()
 require'debug-adapters'.setup()
 require'jobs'.setup()
+
+require'vgit'.setup()
 
