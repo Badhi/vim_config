@@ -31,6 +31,9 @@ function M.setup()
         },
         nt_cpp_tools = {
             enable = true,
+            preview = {
+                accept = '<tab>'
+            }
         },
         playground = {
             enable = true,

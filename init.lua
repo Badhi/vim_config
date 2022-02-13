@@ -2,9 +2,11 @@ local opt = vim.opt
 local cmd = vim.cmd
 
 require 'paq' {
+    'github/copilot.vim',
     'junegunn/fzf.vim',
 
     -- 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+     'sotte/presenting.vim',
 
     'morhetz/gruvbox',
     'mhartington/oceanic-next',
@@ -20,7 +22,7 @@ require 'paq' {
     'hrsh7th/cmp-buffer',
     'hrsh7th/nvim-cmp',
 
-    'nvim-treesitter/nvim-treesitter',
+    'badhi/nvim-treesitter',
     'nvim-treesitter/playground',
     'nvim-treesitter/nvim-treesitter-textobjects',
 
@@ -44,6 +46,8 @@ require 'paq' {
     'rcarriga/nvim-dap-ui',
     'theHamsta/nvim-dap-virtual-text',
     'jbyuki/one-small-step-for-vimkind',
+
+    'tpope/vim-commentary',
 }
 
 opt.termguicolors = true
@@ -57,6 +61,18 @@ opt.relativenumber=true
 cmd('syntax enable')
 cmd('colorscheme OceanicNext')
 cmd('command CDC cd %:p:h')
+cmd('set clipboard+=unnamedplus')
+
+vim.g.presenting_font_larg = 'nancyj'
+cmd([[
+augroup presentation
+    autocmd!
+" Presentation mode
+    au Filetype markdown nnoremap <buffer> <F2> :PresentingStart<CR>
+" ASCII art
+    au Filetype markdown nnoremap <buffer> <F3> :.!toilet -w 200 -f term -F border<CR>
+augroup end
+]])
 
 -- Telescope commands
 local opts = { noremap = true, silent = true}

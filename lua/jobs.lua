@@ -9,8 +9,9 @@ function M.setup()
             default_task = 'build',
             tasks = {
                 build = {
-                    command = 'echo "hello"',
-                    output = 'echo', -- Where to show output of the
+                    command = './cmake_build.sh',
+                    type = 'shell',
+                    output = 'buffer', -- Where to show output of the
                     -- command. Can be `buffer`,
                     -- `consolation`, `echo`,
                     -- `quickfix`, `terminal`, or `none`
@@ -18,12 +19,18 @@ function M.setup()
                         -- `open_on_run`, which defines the behavior
                         -- for the quickfix list opening) (can be
                         -- `never`, `always`, or `auto`, the default)
-                        open_on_run = 'always',
-                        on_exit = function () yabs:run_task('fail_check') end
+                        open_on_run = 'never',
+                        on_exit = vim.schedule_wrap(function (_, error)
+                            if error == 0 then
+                                yabs.languages.cpp.run_task('fail_check')
+                            end
+                        end
+                        )
                     },
                 },
                 fail_check = {
-                    command = 'echo "hello2"',
+                    command = './make_run.sh',
+                    type = 'shell',
                     output = 'quickfix',
                     opts = {
                         open_on_run = 'always'
