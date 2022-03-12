@@ -51,7 +51,10 @@ require 'paq' {
 
     'tpope/vim-commentary',
     'tanvirtin/vgit.nvim',
-    'rebelot/heirline.nvim'
+    'rebelot/heirline.nvim',
+
+    -- rust lsp related
+    'simrat39/rust-tools.nvim',
 }
 
 opt.termguicolors = true

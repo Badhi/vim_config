@@ -4,11 +4,10 @@ function M.setup()
     local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
     parser_config.awk = {
         install_info = {
-            url = "/mnt/e/Work/tree-sitter-awk", -- local path or git repo
-            files = {"src/parser.c"}
+            url = "https://github.com/Beaglefoot/tree-sitter-awk", -- local path or git repo
+            files = {"src/parser.c", "src/scanner.c"}
         },
         filetype = "awk", -- if filetype does not agrees with parser name
-        --  used_by = {"bar", "baz"} -- additional filetypes that use this parser
     }
 
     require'nvim-treesitter.configs'.setup {
