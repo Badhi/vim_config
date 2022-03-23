@@ -50,7 +50,10 @@ local function lsp_setup ()
     vim.fn.sign_define('DiagnosticSignInformation', {text='', texthl='DiagnosticSignInformation', linehl='', numhl=''})
     vim.fn.sign_define('DiagnosticSignHint', {text='', texthl='DiagnosticSignHint', linehl='', numhl=''})
 
-    require "lsp_signature".setup()
+    require "lsp_signature".setup({
+        hint_prefix = '🚩',
+        toggle_key = '<M-x>'
+    })
 end
 
 local function on_attach(_, bufnr)
